@@ -1,0 +1,88 @@
+# Build e dependências
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.vs/
+.vscode/
+.vsconfig
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.temp
+
+# Configurações locais
+appsettings.*.local.json
+appsettings.Development.json
+
+# Configurações do Rider e VS Code
+.idea/
+*.code-workspace
+
+# Arquivos gerados por pacotes
+*.nupkg
+*.snupkg
+*.pidb
+*.sdf
+*.dbmdl
+
+# Docker
+**/Dockerfile
+**/docker-compose.yml
+**/docker-compose.*.yml
+**/.docker/
+
+# Teste e cobertura
+coverage/
+TestResults/
+*.coverage
+*.coveragexml
+
+# Arquivos HTTP de testes
+*.http
+
+# Scripts compilados ou temporários
+scripts/**/*.sh~
+scripts/**/*.bak
+scripts/**/*.tmp
+
+# Arquivos de publicação
+publish/
+*.Publish.xml
+
+# Outras pastas ignoráveis
+.env
+.env.*
+secrets.json
+
+# Certificados temporários (https dev certs)
+*.pfx
+*.cer
+
+# Diretórios comuns de cache do .NET
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Snapshots do Visual Studio
+*.psess
+*.vsp
+
+# Arquivos do ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Arquivos do JetBrains
+.idea/
+
+# Arquivos de backup do MacOS / Linux
+*.DS_Store
+*.swp
+*~
+
+# Diretório de publicação (caso seja gerado manualmente)
+publish/
