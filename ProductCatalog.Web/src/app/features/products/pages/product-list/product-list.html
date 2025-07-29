@@ -101,11 +101,10 @@
 
     <!-- Tabela de Produtos -->
     <app-product-table
-      *ngIf="!isLoading || (products && products.length > 0)"
       [products]="products"
+      [allDepartments]="allDepartments"
       [isLoading]="isLoading"
       [showFilters]="showFilters"
-      (add)="navigateToAdd()"
       (edit)="navigateToEdit($event)"
       (delete)="confirmDelete($event)"
       (statusChange)="updateProductStatus($event)"

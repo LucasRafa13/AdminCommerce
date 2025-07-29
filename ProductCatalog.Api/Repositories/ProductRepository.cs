@@ -17,14 +17,38 @@ public class ProductRepository : IProductRepository
     public async Task<IEnumerable<Product>> GetAll()
     {
         using var connection = _dbConfig.CreateConnection();
-        var query = "SELECT * FROM products WHERE deleted = FALSE";
+
+        var query = @"
+            SELECT 
+                id,
+                code,
+                description,
+                department_code AS DepartmentCode,
+                price,
+                is_active AS IsActive,
+                deleted
+            FROM products 
+            WHERE deleted = FALSE";
+
         return await connection.QueryAsync<Product>(query);
     }
 
     public async Task<Product?> GetById(Guid id)
     {
         using var connection = _dbConfig.CreateConnection();
-        var query = "SELECT * FROM products WHERE id = @Id AND deleted = FALSE";
+
+        var query = @"
+            SELECT 
+                id,
+                code,
+                description,
+                department_code AS DepartmentCode,
+                price,
+                is_active AS IsActive,
+                deleted
+            FROM products 
+            WHERE id = @Id AND deleted = FALSE";
+
         return await connection.QueryFirstOrDefaultAsync<Product>(query, new { Id = id });
     }
 

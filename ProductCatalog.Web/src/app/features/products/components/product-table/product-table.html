@@ -1,8 +1,3 @@
-<!--
-  Este HTML foi atualizado para usar as classes CSS do seu arquivo SCSS,
-  como .product-table, .product-code, .department-chip, etc.
-  Isso aplicará o estilo avançado que você deseja.
--->
 <div class="product-table-container">
   <!-- Filtros -->
   <div class="filters-container" *ngIf="showFilters">
@@ -24,9 +19,9 @@
         (selectionChange)="applyFilter()"
       >
         <mat-option value="">Todos</mat-option>
-        <mat-option *ngFor="let dept of departments" [value]="dept">{{
-          dept
-        }}</mat-option>
+        <mat-option *ngFor="let dept of allDepartments" [value]="dept.code">
+          {{ dept.description }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -60,9 +55,9 @@
     <mat-table class="product-table" [dataSource]="dataSource" matSort>
       <!-- Coluna Código -->
       <ng-container matColumnDef="code">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Código</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          Código
+        </mat-header-cell>
         <mat-cell *matCellDef="let element" class="product-code-cell">
           <span class="product-code">{{ element.code }}</span>
         </mat-cell>
@@ -70,41 +65,41 @@
 
       <!-- Coluna Descrição -->
       <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Descrição</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element" class="product-description">{{
-          element.description
-        }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          Descrição
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="product-description">
+          {{ element.description }}
+        </mat-cell>
       </ng-container>
 
       <!-- Coluna Departamento -->
       <ng-container matColumnDef="department">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Departamento</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          Departamento
+        </mat-header-cell>
         <mat-cell *matCellDef="let element" class="product-department">
-          <span class="department-chip">{{
-            getDepartmentName(element.departmentCode)
-          }}</span>
+          <span class="department-chip">
+            {{ getDepartmentName(element.departmentCode) }}
+          </span>
         </mat-cell>
       </ng-container>
 
       <!-- Coluna Preço -->
       <ng-container matColumnDef="price">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Preço</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element" class="product-price">{{
-          element.price | currency : "BRL"
-        }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          Preço
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="product-price">
+          {{ element.price | currency : "BRL" }}
+        </mat-cell>
       </ng-container>
 
       <!-- Coluna Status -->
       <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Status</mat-header-cell
-        >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          Status
+        </mat-header-cell>
         <mat-cell *matCellDef="let element" class="product-status">
           <mat-slide-toggle
             class="status-toggle"

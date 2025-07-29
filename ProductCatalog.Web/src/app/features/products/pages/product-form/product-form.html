@@ -1,9 +1,4 @@
-<!--
-  Este HTML usa a mesma estrutura da página de lista (.page-header, .main-card)
-  para garantir uma aparência consistente em toda a aplicação.
--->
 <div class="product-form-page-container">
-  <!-- Header da Página (reutilizado da lista) -->
   <div class="page-header">
     <div class="header-content">
       <h1 class="page-title">
@@ -28,14 +23,12 @@
     </div>
   </div>
 
-  <!-- Card Principal (reutilizado da lista) -->
   <div class="main-card">
     <div *ngIf="isLoading" class="loading-overlay">
       <mat-spinner></mat-spinner>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="product-form">
-      <!-- Campo Código -->
       <mat-form-field appearance="outline">
         <mat-label>Código do Produto</mat-label>
         <input
@@ -49,7 +42,6 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Campo Descrição -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Descrição Completa</mat-label>
         <input
@@ -63,7 +55,6 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Campo Departamento -->
       <mat-form-field appearance="outline">
         <mat-label>Departamento</mat-label>
         <mat-select formControlName="departmentCode" required>
@@ -76,7 +67,6 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Campo Preço -->
       <mat-form-field appearance="outline">
         <mat-label>Preço</mat-label>
         <input
@@ -92,14 +82,12 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Campo Status -->
       <div class="toggle-field full-width">
         <mat-slide-toggle formControlName="isActive" color="primary">
           Produto Ativo no Catálogo
         </mat-slide-toggle>
       </div>
 
-      <!-- Ações do Formulário -->
       <div class="form-actions full-width">
         <button mat-stroked-button type="button" (click)="onCancel()">
           Cancelar

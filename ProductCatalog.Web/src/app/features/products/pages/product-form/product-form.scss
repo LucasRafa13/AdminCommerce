@@ -1,5 +1,4 @@
-// Reutiliza os mesmos nomes de classe da product-list.scss para herdar os estilos
-@import "../../../../../styles.scss"; // Importa variáveis globais se houver
+@use "../../../../../styles.scss" as *;
 
 .product-form-page-container {
   padding: var(--spacing-lg, 24px);

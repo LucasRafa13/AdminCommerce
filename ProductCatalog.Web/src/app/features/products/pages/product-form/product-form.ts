@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-// Imports do Angular Material
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,7 +19,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-// Models e Serviços
 import {
   Product,
   Department,
@@ -67,11 +65,10 @@ export class ProductFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      id: [''],
-      code: ['', [Validators.required, Validators.pattern(/^[A-Z0-9]+$/)]],
-      description: ['', [Validators.required, Validators.minLength(3)]],
+      code: ['', Validators.required],
+      description: ['', Validators.required],
       departmentCode: ['', Validators.required],
-      price: [null, [Validators.required, Validators.min(0.01)]],
+      price: [0, [Validators.required, Validators.min(0)]],
       isActive: [true],
     });
 
@@ -88,7 +85,7 @@ export class ProductFormComponent implements OnInit {
     this.departmentService.getAll().subscribe({
       next: (data) => {
         this.departments = data;
-        // **MELHORIA:** Se for um novo produto, pré-seleciona o primeiro departamento.
+        console.log('[DEBUG] Departamentos carregados:', this.departments);
         if (!this.isEdit && this.departments.length > 0) {
           this.form.get('departmentCode')?.setValue(this.departments[0].code);
         }
@@ -108,6 +105,7 @@ export class ProductFormComponent implements OnInit {
       .subscribe({
         next: (product) => {
           this.form.patchValue(product);
+          console.log('[DEBUG] Produto carregado:', product);
         },
         error: (error) => {
           this.notificationService.showError('Produto não encontrado.');
@@ -118,23 +116,22 @@ export class ProductFormComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log('[DEBUG] Form value:', this.form.value);
+
     if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.notificationService.showWarning(
-        'Por favor, corrija os erros no formulário.'
+      this.notificationService.showError(
+        'Preencha todos os campos obrigatórios'
       );
       return;
     }
 
+    const payload = this.form.value;
     this.isLoading = true;
     let request$: Observable<any>;
 
     if (this.isEdit && this.productId) {
-      const payload: UpdateProductRequest = this.form.value;
       request$ = this.productService.update(this.productId, payload);
     } else {
-      const payload: CreateProductRequest = this.form.value;
-      delete (payload as any).id;
       request$ = this.productService.create(payload);
     }
 
@@ -156,6 +153,7 @@ export class ProductFormComponent implements OnInit {
   onCancel() {
     this.router.navigate(['/products']);
   }
+
   hasFieldError(fieldName: string, errorType?: string): boolean {
     const field = this.form.get(fieldName);
     if (!field) return false;
@@ -163,6 +161,7 @@ export class ProductFormComponent implements OnInit {
       return field.hasError(errorType) && (field.touched || field.dirty);
     return field.invalid && (field.touched || field.dirty);
   }
+
   getFieldErrorMessage(fieldName: string): string {
     const field = this.form.get(fieldName);
     if (!field || !field.errors) return '';

@@ -13,9 +13,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Nossos componentes e serviços
-import { Product } from '../../../core/models/product.model';
+import { Product, Department } from '../../../core/models/product.model';
 import { ProductService } from '../../../../core/services/product.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { DepartmentService } from '../../../../core/services/department.service';
 import { ProductTableComponent } from '../../components/product-table/product-table';
 
 @Component({
@@ -36,6 +37,7 @@ import { ProductTableComponent } from '../../components/product-table/product-ta
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
+  allDepartments: Department[] = []; // Renomeado para clareza
   isLoading = true;
   hasError = false;
   errorMessage = '';
@@ -46,11 +48,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
   constructor(
     private productService: ProductService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private departmentService: DepartmentService
   ) {}
 
   ngOnInit() {
-    this.loadProducts();
+    this.loadInitialData();
   }
 
   ngOnDestroy() {
@@ -58,46 +61,83 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadProducts() {
+  loadInitialData() {
     this.isLoading = true;
-    this.hasError = false;
-
-    this.productService
+    this.departmentService
       .getAll()
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => (this.isLoading = false))
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
-          this.products = data;
+        next: (depts) => {
+          this.allDepartments = depts;
+          this.loadProducts(); // Carrega produtos APÓS ter os departamentos
         },
         error: (err) => {
+          this.isLoading = false;
           this.hasError = true;
-          this.errorMessage =
-            'Falha ao carregar produtos. Verifique a conexão com a API.';
+          this.errorMessage = 'Falha crítica ao carregar dados essenciais.';
           this.notificationService.showError(this.errorMessage);
           console.error(err);
         },
       });
   }
 
+  loadProducts() {
+    this.isLoading = true;
+    this.hasError = false;
+    console.log('[DEBUG] Iniciando carregamento de produtos...');
+
+    this.productService
+      .getAll()
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.isLoading = false;
+          console.log('[DEBUG] Finalizou carregamento de produtos.');
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.products = data;
+          console.log('[DEBUG] Produtos recebidos da API:', data);
+
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach((product, index) => {
+              console.log(
+                `[DEBUG] Produto ${index}:`,
+                `ID: ${product.id}`,
+                `Code: ${product.code}`,
+                `Description: ${product.description}`,
+                `DepartmentCode: ${product.departmentCode}`,
+                `Price: ${product.price}`,
+                `IsActive: ${product.isActive}`
+              );
+            });
+          } else {
+            console.warn('[DEBUG] Nenhum produto foi retornado da API.');
+          }
+        },
+        error: (err) => {
+          this.hasError = true;
+          this.errorMessage = 'Falha ao carregar produtos.';
+          this.notificationService.showError(this.errorMessage);
+          console.error('[ERRO] Falha ao carregar produtos:', err);
+        },
+      });
+  }
+
+  // ... O resto dos seus métodos (refreshData, navigateToEdit, etc.) permanece o mesmo ...
   refreshData() {
     this.loadProducts();
   }
-
   retryLoad() {
-    this.loadProducts();
+    this.loadInitialData();
   }
-
   toggleFilters() {
     this.showFilters = !this.showFilters;
   }
-
   navigateToAdd() {
     this.router.navigate(['/products/add']);
   }
-
   navigateToEdit(product: Product) {
     this.router.navigate(['/products/edit', product.id]);
   }
@@ -118,10 +158,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
             );
             this.loadProducts();
           },
-          error: (err) => {
-            this.notificationService.showError('Falha ao excluir o produto.');
-            console.error(err);
-          },
+          error: (err) =>
+            this.notificationService.showError('Falha ao excluir o produto.'),
         });
     }
   }
@@ -135,18 +173,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          const statusText = status ? 'ativado' : 'desativado';
           this.notificationService.showSuccess(
-            `Produto ${statusText} com sucesso!`
+            `Status atualizado com sucesso!`
           );
           const index = this.products.findIndex((p) => p.id === product.id);
           if (index !== -1) this.products[index].isActive = status;
         },
         error: (err) => {
-          this.notificationService.showError(
-            'Falha ao atualizar o status do produto.'
-          );
-          console.error(err);
+          this.notificationService.showError('Falha ao atualizar o status.');
           this.loadProducts();
         },
       });
@@ -155,21 +189,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
   getActiveProductsCount(): number {
     return this.products.filter((p) => p.isActive).length;
   }
-
   getInactiveProductsCount(): number {
     return this.products.filter((p) => !p.isActive).length;
   }
-
-  getDepartmentName(code: string): string {
-    const departments: { [key: string]: string } = {
-      '010': 'BEBIDAS',
-      '020': 'CONGELADOS',
-      '030': 'LATICÍNIOS',
-      '040': 'VEGETAIS',
-    };
-    return departments[code] || code;
-  }
-
   exportAllData() {}
   showHelp() {
     alert('Ajuda...');
