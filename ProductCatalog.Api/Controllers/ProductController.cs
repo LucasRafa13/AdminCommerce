@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductCatalog.Api.Dtos;
 using ProductCatalog.Api.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace ProductCatalog.Api.Controllers;
 
@@ -13,6 +15,17 @@ public class ProductController : ControllerBase
     public ProductController(ProductService service)
     {
         _service = service;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var product = await _service.GetById(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+        return Ok(product);
     }
 
     [HttpGet]

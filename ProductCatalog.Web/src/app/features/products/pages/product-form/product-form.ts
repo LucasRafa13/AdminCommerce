@@ -88,6 +88,10 @@ export class ProductFormComponent implements OnInit {
     this.departmentService.getAll().subscribe({
       next: (data) => {
         this.departments = data;
+        // **MELHORIA:** Se for um novo produto, pré-seleciona o primeiro departamento.
+        if (!this.isEdit && this.departments.length > 0) {
+          this.form.get('departmentCode')?.setValue(this.departments[0].code);
+        }
       },
       error: (error) => {
         console.error('Erro ao carregar departamentos:', error);
@@ -123,8 +127,6 @@ export class ProductFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-
-    // CORREÇÃO: Prepara um payload limpo para a API.
     let request$: Observable<any>;
 
     if (this.isEdit && this.productId) {
@@ -132,7 +134,7 @@ export class ProductFormComponent implements OnInit {
       request$ = this.productService.update(this.productId, payload);
     } else {
       const payload: CreateProductRequest = this.form.value;
-      delete (payload as any).id; // Remove o campo 'id' antes de enviar para a criação.
+      delete (payload as any).id;
       request$ = this.productService.create(payload);
     }
 
@@ -154,7 +156,6 @@ export class ProductFormComponent implements OnInit {
   onCancel() {
     this.router.navigate(['/products']);
   }
-
   hasFieldError(fieldName: string, errorType?: string): boolean {
     const field = this.form.get(fieldName);
     if (!field) return false;
@@ -162,7 +163,6 @@ export class ProductFormComponent implements OnInit {
       return field.hasError(errorType) && (field.touched || field.dirty);
     return field.invalid && (field.touched || field.dirty);
   }
-
   getFieldErrorMessage(fieldName: string): string {
     const field = this.form.get(fieldName);
     if (!field || !field.errors) return '';
