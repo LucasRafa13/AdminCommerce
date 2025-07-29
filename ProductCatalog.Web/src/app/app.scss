@@ -1,0 +1,61 @@
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+// Reset e base
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Inter", sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+  line-height: 1.5;
+  scroll-behavior: smooth;
+}
+
+// Estrutura principal
+body {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+// Estilização padrão de texto
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+// Container padrão
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  body {
+    padding: 0.5rem;
+  }
+
+  .container {
+    padding: 0 0.5rem;
+  }
+}

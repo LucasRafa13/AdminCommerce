@@ -1,0 +1,125 @@
+<div class="product-list-container">
+  <!-- Header da Página -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon class="page-icon">inventory_2</mat-icon>
+        Gestão de Produtos
+      </h1>
+      <p class="page-subtitle">Gerencie o catálogo de produtos da sua loja</p>
+    </div>
+
+    <div class="page-actions">
+      <!-- Estatísticas Rápidas -->
+      <div class="stats-cards" *ngIf="products?.length">
+        <div class="stat-card">
+          <div class="stat-number">{{ products.length }}</div>
+          <div class="stat-label">Total</div>
+        </div>
+
+        <div class="stat-card active">
+          <div class="stat-number">{{ getActiveProductsCount() }}</div>
+          <div class="stat-label">Ativos</div>
+        </div>
+
+        <div class="stat-card inactive">
+          <div class="stat-number">{{ getInactiveProductsCount() }}</div>
+          <div class="stat-label">Inativos</div>
+        </div>
+      </div>
+
+      <!-- Botão Adicionar -->
+      <button
+        mat-raised-button
+        color="primary"
+        class="add-btn"
+        (click)="navigateToAdd()"
+        [disabled]="isLoading"
+      >
+        <mat-icon>add</mat-icon>
+        Novo Produto
+      </button>
+    </div>
+  </div>
+
+  <!-- Card Principal -->
+  <div class="main-card">
+    <!-- Toolbar -->
+    <div class="card-toolbar">
+      <div class="toolbar-title">
+        <mat-icon>list</mat-icon>
+        Lista de Produtos
+      </div>
+
+      <div class="toolbar-actions">
+        <button
+          mat-icon-button
+          class="refresh-btn"
+          (click)="refreshData()"
+          [disabled]="isLoading"
+          matTooltip="Atualizar lista"
+        >
+          <mat-icon [class.spinning]="isLoading">refresh</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          [class.active]="showFilters"
+          (click)="toggleFilters()"
+          matTooltip="Mostrar/Ocultar filtros"
+        >
+          <mat-icon>filter_list</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="optionsMenu"
+          matTooltip="Mais opções"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #optionsMenu="matMenu">
+          <button mat-menu-item (click)="exportAllData()">
+            <mat-icon>download</mat-icon>
+            <span>Exportar Todos</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="showHelp()">
+            <mat-icon>help</mat-icon>
+            <span>Ajuda</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading && products?.length === 0" class="loading-simple">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+      <p>Carregando produtos...</p>
+    </div>
+
+    <!-- Tabela de Produtos -->
+    <app-product-table
+      *ngIf="!isLoading || (products && products.length > 0)"
+      [products]="products"
+      [isLoading]="isLoading"
+      [showFilters]="showFilters"
+      (add)="navigateToAdd()"
+      (edit)="navigateToEdit($event)"
+      (delete)="confirmDelete($event)"
+      (statusChange)="updateProductStatus($event)"
+    ></app-product-table>
+
+    <!-- Estado de Erro -->
+    <div class="error-state" *ngIf="hasError && !isLoading">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Ops! Algo deu errado</h3>
+      <p class="error-message">{{ errorMessage }}</p>
+      <button mat-raised-button color="primary" (click)="retryLoad()">
+        <mat-icon>refresh</mat-icon>
+        Tentar Novamente
+      </button>
+    </div>
+  </div>
+</div>

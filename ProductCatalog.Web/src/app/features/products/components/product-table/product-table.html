@@ -1,0 +1,161 @@
+<!--
+  Este HTML foi atualizado para usar as classes CSS do seu arquivo SCSS,
+  como .product-table, .product-code, .department-chip, etc.
+  Isso aplicará o estilo avançado que você deseja.
+-->
+<div class="product-table-container">
+  <!-- Filtros -->
+  <div class="filters-container" *ngIf="showFilters">
+    <mat-form-field appearance="outline" class="filter-field search-field">
+      <mat-label>Buscar produto</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchTerm"
+        (keyup)="applyFilter()"
+        placeholder="Código ou descrição"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Departamento</mat-label>
+      <mat-select
+        [(ngModel)]="selectedDepartment"
+        (selectionChange)="applyFilter()"
+      >
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let dept of departments" [value]="dept">{{
+          dept
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Status</mat-label>
+      <mat-select
+        [(ngModel)]="selectedStatus"
+        (selectionChange)="applyFilter()"
+      >
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="true">Ativo</mat-option>
+        <mat-option value="false">Inativo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filter-actions">
+      <button mat-stroked-button color="primary" (click)="clearFilters()">
+        Limpar Filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Wrapper da Tabela -->
+  <div class="table-wrapper">
+    <!-- Overlay de Loading -->
+    <div class="loading-shade" *ngIf="isLoading">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <!-- Tabela de Produtos -->
+    <mat-table class="product-table" [dataSource]="dataSource" matSort>
+      <!-- Coluna Código -->
+      <ng-container matColumnDef="code">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Código</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element" class="product-code-cell">
+          <span class="product-code">{{ element.code }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Coluna Descrição -->
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Descrição</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element" class="product-description">{{
+          element.description
+        }}</mat-cell>
+      </ng-container>
+
+      <!-- Coluna Departamento -->
+      <ng-container matColumnDef="department">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Departamento</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element" class="product-department">
+          <span class="department-chip">{{
+            getDepartmentName(element.departmentCode)
+          }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Coluna Preço -->
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Preço</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element" class="product-price">{{
+          element.price | currency : "BRL"
+        }}</mat-cell>
+      </ng-container>
+
+      <!-- Coluna Status -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Status</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element" class="product-status">
+          <mat-slide-toggle
+            class="status-toggle"
+            [checked]="element.isActive"
+            (change)="toggleStatus(element, $event)"
+            [matTooltip]="
+              element.isActive ? 'Produto Ativo' : 'Produto Inativo'
+            "
+          >
+          </mat-slide-toggle>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Coluna Ações -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let element" class="product-actions">
+          <div class="action-buttons">
+            <button
+              mat-icon-button
+              class="action-btn edit-btn"
+              (click)="onEdit(element)"
+              matTooltip="Editar"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="action-btn delete-btn"
+              (click)="onDelete(element)"
+              matTooltip="Excluir"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row
+        *matHeaderRowDef="displayedColumns; sticky: true"
+      ></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="6">Nenhum produto encontrado.</td>
+      </tr>
+    </mat-table>
+
+    <mat-paginator
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>

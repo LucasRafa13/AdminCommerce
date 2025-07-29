@@ -1,0 +1,119 @@
+<!--
+  Este HTML usa a mesma estrutura da página de lista (.page-header, .main-card)
+  para garantir uma aparência consistente em toda a aplicação.
+-->
+<div class="product-form-page-container">
+  <!-- Header da Página (reutilizado da lista) -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon class="page-icon">{{
+          isEdit ? "edit_note" : "add_box"
+        }}</mat-icon>
+        {{ isEdit ? "Editar Produto" : "Novo Produto" }}
+      </h1>
+      <p class="page-subtitle">
+        {{
+          isEdit
+            ? "Altere os dados do produto abaixo."
+            : "Preencha os dados para cadastrar um novo produto."
+        }}
+      </p>
+    </div>
+    <div class="page-actions">
+      <button mat-stroked-button class="back-btn" (click)="onCancel()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar para a Lista
+      </button>
+    </div>
+  </div>
+
+  <!-- Card Principal (reutilizado da lista) -->
+  <div class="main-card">
+    <div *ngIf="isLoading" class="loading-overlay">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="product-form">
+      <!-- Campo Código -->
+      <mat-form-field appearance="outline">
+        <mat-label>Código do Produto</mat-label>
+        <input
+          matInput
+          formControlName="code"
+          required
+          placeholder="Ex: PRD001"
+        />
+        <mat-error *ngIf="hasFieldError('code')">
+          {{ getFieldErrorMessage("code") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Descrição -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descrição Completa</mat-label>
+        <input
+          matInput
+          formControlName="description"
+          required
+          placeholder="Ex: Coca-Cola Lata 350ml"
+        />
+        <mat-error *ngIf="hasFieldError('description')">
+          {{ getFieldErrorMessage("description") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Departamento -->
+      <mat-form-field appearance="outline">
+        <mat-label>Departamento</mat-label>
+        <mat-select formControlName="departmentCode" required>
+          <mat-option *ngFor="let d of departments" [value]="d.code">
+            {{ d.description }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasFieldError('departmentCode')">
+          {{ getFieldErrorMessage("departmentCode") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Preço -->
+      <mat-form-field appearance="outline">
+        <mat-label>Preço</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="price"
+          required
+          placeholder="0.00"
+        />
+        <span matTextPrefix>R$&nbsp;</span>
+        <mat-error *ngIf="hasFieldError('price')">
+          {{ getFieldErrorMessage("price") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Status -->
+      <div class="toggle-field full-width">
+        <mat-slide-toggle formControlName="isActive" color="primary">
+          Produto Ativo no Catálogo
+        </mat-slide-toggle>
+      </div>
+
+      <!-- Ações do Formulário -->
+      <div class="form-actions full-width">
+        <button mat-stroked-button type="button" (click)="onCancel()">
+          Cancelar
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || isLoading"
+        >
+          <mat-icon>save</mat-icon>
+          Salvar Produto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

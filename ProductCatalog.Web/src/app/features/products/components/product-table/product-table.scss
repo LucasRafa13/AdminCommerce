@@ -1,0 +1,172 @@
+/*
+  Arquivo de estilo completo para a tabela de produtos.
+  A seção de filtros foi ajustada para um layout limpo,
+  com espaçamento adequado e larguras controladas.
+*/
+
+// --- ESTILOS PARA FILTROS (VERSÃO COM CORREÇÃO FINAL) ---
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline; /* Garante o alinhamento horizontal perfeito. */
+  gap: var(--spacing-md, 16px);
+  padding: var(--spacing-md, 16px) var(--spacing-lg, 24px);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  background-color: var(--surface-color, #ffffff);
+}
+
+.filter-field {
+  // Impede que os campos estiquem, mantendo a largura definida.
+  flex-grow: 0;
+}
+
+.search-field {
+  // Define a largura para o campo de busca.
+  width: 300px;
+}
+
+/*
+ * CORREÇÃO PRINCIPAL AQUI:
+ * A largura é aplicada ao .filter-field que não é o de busca.
+ * A regra antiga que aplicava a largura ao 'mat-select' foi removida.
+*/
+.filter-field:not(.search-field) {
+  width: 220px;
+}
+
+.filter-actions {
+  // Empurra o botão "Limpar Filtros" para a direita.
+  margin-left: auto;
+}
+
+// --- ESTILOS PARA O WRAPPER DA TABELA E LOADING ---
+.table-wrapper {
+  position: relative;
+  border-radius: var(--border-radius-lg, 12px);
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.75);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 var(--border-radius-lg, 12px) var(--border-radius-lg, 12px);
+}
+
+// --- ESTILOS PRINCIPAIS DA TABELA ---
+.product-table {
+  width: 100%;
+  background: var(--surface-color, #ffffff);
+
+  .mat-header-row {
+    background: var(--surface-header, #f8fafc);
+  }
+
+  .mat-header-cell {
+    color: var(--text-primary, #334155);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: var(--spacing-md, 16px);
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+
+    &.mat-sort-header-sorted {
+      color: var(--primary-color, #3f51b5);
+    }
+  }
+
+  .mat-row {
+    transition: background-color 0.2s ease-in-out;
+    border-bottom: 1px solid var(--surface-border, #f1f5f9);
+
+    &:hover {
+      background-color: var(--surface-hover, #f8fafc);
+    }
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+
+  .mat-cell {
+    padding: var(--spacing-md, 16px);
+    border-bottom: none;
+    color: var(--text-secondary, #64748b);
+  }
+
+  // --- ESTILOS ESPECÍFICOS DAS CÉLULAS ---
+  .product-code-cell .product-code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+      monospace;
+    font-weight: 600;
+    color: var(--primary-color-dark, #303f9f);
+    background-color: var(--primary-color-light, #e8eaf6);
+    border-radius: var(--border-radius-sm, 4px);
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
+  .product-description {
+    font-weight: 500;
+    color: var(--text-primary, #334155);
+  }
+
+  .product-department .department-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+    border-radius: var(--border-radius-xl, 99px);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .product-price {
+    font-weight: 700;
+    color: var(--text-primary, #334155);
+  }
+
+  .product-status .status-toggle {
+    transform: scale(0.85);
+  }
+
+  .product-actions .action-buttons {
+    display: flex;
+    gap: var(--spacing-xs, 8px);
+
+    .action-btn {
+      transition: all 0.2s ease-in-out;
+      &.edit-btn {
+        color: #1976d2; // Azul
+        &:hover {
+          background-color: rgba(33, 150, 243, 0.1);
+          transform: scale(1.1);
+        }
+      }
+      &.delete-btn {
+        color: #d32f2f; // Vermelho
+        &:hover {
+          background-color: rgba(244, 67, 54, 0.1);
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+}
+
+// --- PAGINADOR ---
+mat-paginator {
+  background-color: var(--surface-header, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  border-top: 1px solid var(--border-color, #e2e8f0);
+}
